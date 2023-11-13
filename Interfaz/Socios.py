@@ -6,26 +6,50 @@ class SocioApp:
         self.root = root
         self.socios = []
 
-        self.nombre_label = tk.Label(root, text="Nombre")
-        self.libros_prestados_label = tk.Label(root, text="Libros Prestados")
-
-        self.nombre_entry = tk.Entry(root)
-        self.libros_prestados_entry = tk.Entry(root)
-
-        self.prestar_button = tk.Button(root, text="Prestar Libro", command=self.prestar_libro)
-        self.devolver_button = tk.Button(root, text="Devolver Libro", command=self.devolver_libro)
-
-        self.socios_tree = ttk.Treeview(root, columns=("Nombre", "Libros Prestados"), show="headings")
+        self.tituloframe = tk.Frame(root)
+        self.tituloframe.pack()
+        self.titulosocios_label = tk.Label(self.tituloframe, text="LISTADO DE SOCIOS")
+        self.titulosocios_label.grid(row=0, column=0, sticky="e")  # Alineado a la derecha
+        
+        self.cuadroframe = tk.Frame(root)
+        self.cuadroframe.pack()
+        
+        self.socios_tree = ttk.Treeview(self.cuadroframe, columns=("Nombre", "Libros Prestados"), show="headings")
         self.socios_tree.heading("Nombre", text="Nombre")
         self.socios_tree.heading("Libros Prestados", text="Libros Prestados")
 
-        self.nombre_label.pack()
-        self.nombre_entry.pack()
-        self.libros_prestados_label.pack()
-        self.libros_prestados_entry.pack()
-        self.prestar_button.pack()
-        self.devolver_button.pack()
         self.socios_tree.pack()
+        
+        # Crear un contenedor Frame
+        self.frame = tk.Frame(root)
+        self.frame.pack()
+        
+        self.nombre_label = tk.Label(self.frame, text="Nombre")
+        self.nombre_entry = tk.Entry(self.frame)
+        
+        self.libros_prestados_label = tk.Label(self.frame, text="Libros Prestados")
+        self.libros_prestados_entry = tk.Entry(self.frame)
+        
+        # Colocar los widgets usando grid
+        self.nombre_label.grid(row=0, column=0, sticky="e")  # Alineado a la derecha
+        self.nombre_entry.grid(row=0, column=1)
+
+        self.libros_prestados_label.grid(row=1, column=0, sticky="e")  # Alineado a la derecha
+        self.libros_prestados_entry.grid(row=1, column=1)
+
+        # Crear un contenedor para los botones
+        self.botones_frame = tk.Frame(root)
+        self.botones_frame.pack(pady=10)
+        
+        self.prestar_button = tk.Button(self.botones_frame, text="Prestar Libro", command=self.prestar_libro)
+        self.prestar_button.config(bg="lightblue")
+        self.devolver_button = tk.Button(self.botones_frame, text="Devolver Libro", command=self.devolver_libro)
+        self.devolver_button.config(bg="lightblue")
+        
+        self.prestar_button.grid(row=0, column=0, padx=5)
+        self.devolver_button.grid(row=0, column=1, padx=5)
+
+        
 
     def prestar_libro(self):
         nombre = self.nombre_entry.get()

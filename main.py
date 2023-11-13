@@ -49,7 +49,7 @@ frame_socios = tk.Frame(notebook, background="#5c6e78")
 notebook.add(frame_libreria, text="Librería")
 notebook.add(frame_socios, text="Socios")
 
-# Inicializar las dos interfaces
+# Inicializar las  interfaces
 libreria_app = LibreriaApp(frame_libreria)
 socio_app = SocioApp(frame_socios)
 
