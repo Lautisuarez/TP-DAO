@@ -1,13 +1,18 @@
+import datetime
+from Entidades import Prestamo
+from Entidades import Socio
+
+
 class Libro:
     _titulo = ""
     _precio_reposicion = 0
     _estado = ""
 
-    def __init__(self, codigo : int, titulo: str, precio_reposicion : float, estado):
+    def __init__(self, codigo : int, titulo: str, precio_reposicion : float):
         self._codigo = codigo
         self._titulo = titulo
         self._precio_reposicion = precio_reposicion
-        self._estado = estado
+        self._estado = "disponible"
 
     def get_codigo(self) -> int:
         return self._codigo
@@ -27,9 +32,9 @@ class Libro:
     def get_estado(self) -> str:
         return self._estado
 
-    def set_estado(self):
+    def set_estado(self,valor):
         #(disponible, x defecto
         # prestado  --> asociado a un socio 
         # extraviado -->  libro prestado y que posea más de 30 días de demora en su devolución se considera extraviado.
+        self._estado = valor
         
-        self._estado = "disponible"
