@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from Cruds.crudLibro import agregar_libro, obtener_libros, actualizar_libro, eliminar_libro
 from Entidades.Libro import Libro
 
@@ -7,9 +7,10 @@ class LibreriaApp:
     def __init__(self, root):
         self.root = root
         self.libros = []
+
         for libro in obtener_libros():
-            self.libros.append(libro[1:])
-    
+            self.libros.append(libro)
+
         self.tituloframe = tk.Frame(root)
         self.tituloframe.pack()
         self.titulolibros_label = tk.Label(self.tituloframe, text="LISTADO DE LIBROS")
@@ -18,13 +19,15 @@ class LibreriaApp:
         self.cuadroframe = tk.Frame(root)
         self.cuadroframe.pack()
         
-        self.libros_tree = ttk.Treeview(self.cuadroframe, columns=("Título", "Precio", "Estado"), show="headings")
+        self.libros_tree = ttk.Treeview(self.cuadroframe, columns=("Código", "Título", "Precio", "Estado"), show="headings")
+        self.libros_tree.heading("Código", text="Código")
         self.libros_tree.heading("Título", text="Título")
         self.libros_tree.heading("Precio", text="Precio")
         self.libros_tree.heading("Estado", text="Estado")
         
         self.libros_tree.pack()
-        
+        self.libros_tree.bind('<ButtonRelease-1>', self.cargar_datos_seleccionados) # EVENTO CLICK FILA
+
         # Crear un contenedor Frame
         self.frame = tk.Frame(root)
         self.frame.pack()
@@ -47,9 +50,9 @@ class LibreriaApp:
         self.botones_frame = tk.Frame(root)
         self.botones_frame.pack(pady=10)
         
-        self.agregar_button = tk.Button(self.botones_frame, text="Agregar", command=self.agregar_libro)
+        self.agregar_button = tk.Button(self.botones_frame, text="Agregar", command=self.agregar_libro_BD)
         self.agregar_button.config(bg="lightblue")
-        self.actualizar_button = tk.Button(self.botones_frame, text="Actualizar", command=self.actualizar_libro)
+        self.actualizar_button = tk.Button(self.botones_frame, text="Actualizar", command=self.actualizar_libro_BD)
         self.actualizar_button.config(bg="lightblue")
         self.eliminar_button = tk.Button(self.botones_frame, text="Eliminar", command=self.eliminar_libro)
         self.eliminar_button.config(bg="lightblue")
@@ -59,35 +62,58 @@ class LibreriaApp:
         self.eliminar_button.grid(row=0, column=2, padx=5)
 
         self.actualizar_lista()
-    def agregar_libro(self):
+
+    def cargar_datos_seleccionados(self, event):
+        seleccion = self.libros_tree.selection()
+        if seleccion:
+            # Obtener los valores actuales de la fila seleccionada
+            valores_actuales = self.libros_tree.item(seleccion)['values']
+
+            # Cargar los datos en los Entry
+            self.titulo_entry.delete(0, tk.END)
+            self.titulo_entry.insert(0, valores_actuales[1])
+            self.precio_entry.delete(0, tk.END)
+            self.precio_entry.insert(0, valores_actuales[2])
+
+    def agregar_libro_BD(self):
         titulo = self.titulo_entry.get()
         precio = self.precio_entry.get()
 
-        libro = Libro(2,titulo, precio)
+        libro = Libro(self.obtenerProximoID() ,titulo, precio)
         agregar_libro(libro)
-        print(libro._titulo, libro._precio_reposicion, libro._estado)
 
-        self.libros.append((libro._titulo, libro._precio_reposicion, libro._estado))
+        self.libros.append((libro._codigo, libro._titulo, libro._precio_reposicion, libro._estado))
         self.actualizar_lista()
 
-    def actualizar_libro(self):
+    def actualizar_libro_BD(self):
         seleccion = self.libros_tree.selection()
         if seleccion:
+            # Obtener los valores actuales de la fila seleccionada
             titulo = self.titulo_entry.get()
             precio = self.precio_entry.get()
 
-            libro = self.libros_tree.item(seleccion[0])['values']
-            indice = self.libros.index(tuple(libro))
+            # Actualizar el libro seleccionado
+            libro = Libro(self.libros_tree.item(seleccion)['values'][0], titulo, precio)
+            self.libros_tree.item(seleccion, values=(libro.get_codigo(), libro.get_titulo(), libro.get_precio_reposicion(), libro.get_estado()))
+            actualizar_libro(libro)
 
-            self.libros[indice] = (titulo, precio)
-            self.actualizar_lista()
+            messagebox.showinfo("Actualizado", f"El libro: '{libro.get_titulo()}' fue actualizado correctamente.")
+
+            # Reseteamos valores
+            self.limpiar_entradas()
+            self.libros_tree.selection_remove(seleccion)
+        else:
+            messagebox.showerror("Error", "Debe seleccionar un libro para actualizarlo.")
 
     def eliminar_libro(self):
         seleccion = self.libros_tree.selection()
         if seleccion:
-            libro = self.libros_tree.item(seleccion[0])['values']
-            self.libros.remove(tuple(libro))
-            self.actualizar_lista()
+            libro_eliminado = self.libros_tree.item(seleccion)['values']
+            self.libros_tree.delete(seleccion)
+            eliminar_libro(libro_eliminado[0])
+            messagebox.showinfo("Eliminado", f"El libro: '{libro_eliminado[1]}' fue eliminado correctamente.")
+        else:
+            messagebox.showerror("Error", "Debe seleccionar un libro para eliminarlo.")
 
     def actualizar_lista(self):
         self.libros_tree.delete(*self.libros_tree.get_children())
@@ -98,6 +124,11 @@ class LibreriaApp:
     def limpiar_entradas(self):
         self.titulo_entry.delete(0, "end")
         self.precio_entry.delete(0, "end")
+    
+    def obtenerProximoID(self):
+        if(len(self.libros) == 0):
+            return 1
+        return int(self.libros[-1][0]) + 1
 
 if __name__ == "__main__":
     root = tk.Tk()

@@ -1,14 +1,13 @@
 import sqlite3
 from Entidades.Libro import Libro
-from bd import connection_bd
 
 def agregar_libro(libro : Libro):
     with sqlite3.connect('bd.db') as conexion:
         cursor = conexion.cursor()
         cursor.execute('''
-            INSERT INTO libros (titulo, precio_reposicion, estado)
-            VALUES (?, ?, ?)
-        ''', (libro.get_titulo(),libro.get_precio_reposicion(),libro.get_estado()))
+            INSERT INTO libros (codigo, titulo, precio_reposicion, estado)
+            VALUES (?, ?, ?, ?)
+        ''', (libro.get_codigo(), libro.get_titulo(),libro.get_precio_reposicion(),libro.get_estado()))
 
 def obtener_libros():
     with sqlite3.connect('bd.db') as conexion:

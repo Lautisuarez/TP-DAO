@@ -88,5 +88,5 @@ class SocioApp:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    socios_app = SocioApp(root, libros_app)
+    socios_app = SocioApp(root)
     root.mainloop()

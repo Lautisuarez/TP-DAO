@@ -1,6 +1,5 @@
 import sqlite3
 from Entidades.Socio import Socio
-from bd import connection_bd
 
 conexion = sqlite3.connect('bd.db')
 
