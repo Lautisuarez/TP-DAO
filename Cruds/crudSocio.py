@@ -19,7 +19,7 @@ def obtener_socios():
             SELECT * FROM socios
         ''')
         socios = cursor.fetchall()
-        return Socio
+        return socios
     
 def obtener_socios_by_dni(dni):
     with sqlite3.connect('bd.db') as conexion:

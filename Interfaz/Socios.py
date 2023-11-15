@@ -1,11 +1,16 @@
 import tkinter as tk
 from tkinter import ttk
 
+from Cruds.crudSocio import obtener_socios
+
 class SocioApp:
     def __init__(self, root):
         self.root = root
         self.socios = []
 
+        for socio in obtener_socios():
+            self.socios.append(socio)
+            
         # TITULO
         self.frame = tk.Frame(root)
         self.frame.pack(pady=10)
@@ -13,18 +18,24 @@ class SocioApp:
         self.titulosocios_label.grid(row=0, column=0, pady=10, padx=10)
         
         # FRAME INPUTS
+        self.DNI_label = tk.Label(self.titulosocios_label, text="DNI")
+        self.DNI_entry = tk.Entry(self.titulosocios_label)
+        
         self.nombre_label = tk.Label(self.titulosocios_label, text="Nombre")
         self.nombre_entry = tk.Entry(self.titulosocios_label)
         
-        self.libros_prestados_label = tk.Label(self.titulosocios_label, text="Libros Prestados")
-        self.libros_prestados_entry = tk.Entry(self.titulosocios_label)
+        self.apellido_label = tk.Label(self.titulosocios_label, text="Apellido")
+        self.apellido_entry = tk.Entry(self.titulosocios_label)
         
         # INPUTS
+        self.DNI_label.grid(row=1, column=0, sticky="e")  # Alineado a la derecha
+        self.DNI_label.grid(row=1, column=1, padx=10)
+        
         self.nombre_label.grid(row=0, column=0, sticky="e")  # Alineado a la derecha
         self.nombre_entry.grid(row=0, column=1, padx=10)
 
-        self.libros_prestados_label.grid(row=1, column=0, sticky="e")  # Alineado a la derecha
-        self.libros_prestados_entry.grid(row=1, column=1, padx=10)
+        self.apellido_label.grid(row=1, column=0, sticky="e")  # Alineado a la derecha
+        self.apellido_label.grid(row=1, column=1, padx=10)
 
         # BOTONES
         self.botones_frame = tk.Frame(self.titulosocios_label)
@@ -49,13 +60,19 @@ class SocioApp:
         self.cuadroframe.pack()
         
         # TABLA
-        self.socios_tree = ttk.Treeview(self.cuadroframe, columns=("Nombre", "Libros Prestados"), show="headings", height=15)
+        self.socios_tree = ttk.Treeview(self.cuadroframe, columns=("DNI", "Nombre", "Apellido"), show="headings", height=15)
+        self.socios_tree.column("DNI", width=200, anchor=tk.CENTER)
+        self.socios_tree.heading("DNI", text="DNI", anchor=tk.CENTER)
         self.socios_tree.column("Nombre", width=200, anchor=tk.CENTER)
         self.socios_tree.heading("Nombre", text="Nombre", anchor=tk.CENTER)
-        self.socios_tree.column("Libros Prestados", width=200, anchor=tk.CENTER)
-        self.socios_tree.heading("Libros Prestados", text="Libros Prestados", anchor=tk.CENTER)
+        self.socios_tree.column("Apellido", width=200, anchor=tk.CENTER)
+        self.socios_tree.heading("Apellido", text="Apellido", anchor=tk.CENTER)
 
         self.socios_tree.pack()
+        self.socios_tree.bind('<ButtonRelease-1>', self.cargar_datos_seleccionados) 
+
+    def cargar_datos_seleccionados(self, event):
+        seleccion = self.socios_tree.selection()
 
     def prestar_libro(self):
         nombre = self.nombre_entry.get()
