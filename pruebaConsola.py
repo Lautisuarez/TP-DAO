@@ -3,7 +3,7 @@
 from Entidades.Negocio import *
 from reportes import *
 
-codigo_libro = 3
+codigo_libro = 2
 dni_socio = 2
 dias_pactados = -10
 titulo_libro = "libro1"

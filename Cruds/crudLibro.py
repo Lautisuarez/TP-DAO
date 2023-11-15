@@ -25,11 +25,12 @@ def obtener_libros_by_codigo(codigo: int):
             SELECT * FROM libros WHERE codigo = ?
         ''', (codigo,))
         response = cursor.fetchone()
-        if response:
-            libro: Libro = Libro(response[0], response[1], response[2], response[3])
-        else:
-            # no hay un libro con ese codigo
-            libro = None
+        
+        if not response:
+            raise ValueError(f"No se encontró el libro con codigo {codigo}")
+        
+        libro: Libro = Libro(response[0], response[1], response[2], response[3])
+        
         return libro
 
 def actualizar_libro(libro: Libro):

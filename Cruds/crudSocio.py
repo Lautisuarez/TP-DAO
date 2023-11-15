@@ -28,6 +28,9 @@ def obtener_socios_by_dni(dni):
             SELECT * FROM socios where dni = ?
         ''',(dni))
         socio = cursor.fetchone()
+        if not socio:
+            raise ValueError(f"No se encontró el socio con dni {dni}")
+            
         return socio
 
 def actualizar_socio(socio: Socio):

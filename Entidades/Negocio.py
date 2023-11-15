@@ -47,6 +47,7 @@ def devolver_libro(codigo_libro):
     
     # proceso para guardar en BD la prestacion
 def agregar_prestacion(prestamo: Prestamo):
+    try:
         with sqlite3.connect('bd.db') as conexion:
                     cursor = conexion.cursor()
                     
@@ -58,15 +59,23 @@ def agregar_prestacion(prestamo: Prestamo):
                           prestamo.get_dni_socio(),
                           prestamo.get_dias_pactados(),
                           prestamo.get_fecha_prestamo()))
-                    conexion.commit()         
+                    conexion.commit()                    
+    except sqlite3.Error as e:
+        error = f"Error agregando el prestamo: {e}"
+        raise ValueError(error)
+    
     
     # obtiene le ultimo id de la tabla prestamos
 def ultimo_id_prestamos():
+    try:
         with sqlite3.connect('bd.db') as conexion:
                     cursor = conexion.cursor()
                     cursor.execute('''SELECT COALESCE(MAX(id), 0) FROM prestamos''')
                     response = cursor.fetchone()
                     return response[0] + 1    
+    except sqlite3.Error as e:
+        error = f"Error obteniendo el Id de prestamo: {e}"
+        raise ValueError(error)
         
     # cuenta cantidad de libros prestados por socios
 def contar_libros_prestados_por_socio(dni_socio):
@@ -109,6 +118,7 @@ def obtener_extraviados():
     
     # devuelve los prestamos que no han sido finalizados es decir q los libros ya se hayan devuelto
 def obtener_pretaciones():
+    try:
         with sqlite3.connect('bd.db') as conexion:
             cursor = conexion.cursor()
             cursor.execute('''
@@ -118,6 +128,9 @@ def obtener_pretaciones():
             # mapeo de la base de datos a una lista de objetos prestamos
             prestaciones = [Prestamo(*prestamo) for prestamo in lista_bd]
             return prestaciones
+    except sqlite3.Error as e:
+        error = f"Error obteniendo los prestamos: {e}"
+        raise ValueError(error)
         
     
     # valida si el libro a pedir esta con el estado disponible
@@ -129,6 +142,7 @@ def libro_disponible(codigo_libro):
 
     # guarda en la base de datos la devolucion de un libro, solo con fecha y demora 
 def actualizar_prestamo(prestamo:Prestamo):
+    try:
         with sqlite3.connect('bd.db') as conexion:
             cursor = conexion.cursor()
             cursor.execute('''
@@ -137,3 +151,6 @@ def actualizar_prestamo(prestamo:Prestamo):
                 WHERE id = ?
             ''',(prestamo.get_fecha_devolucion(), prestamo.get_demora(), prestamo.get_id()))
             conexion.commit()    
+    except sqlite3.Error as e:
+        error = f"Error actualizando el prestamo: {e}"
+        raise ValueError(error)
