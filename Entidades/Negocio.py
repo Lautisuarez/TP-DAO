@@ -11,6 +11,7 @@ def prestar_libro(codigo_libro , dni_socio, dias_pactados):
         # (aunque todavía se encuentre dentro del plazo del préstamo) y que no posea ningún libro con demora en su devolución
 
         if(contar_libros_prestados_por_socio(dni_socio) > 3 or socio_tiene_libros_con_demora(dni_socio) == True):
+            print(f"El socio no puede solicitar el libro")
             return f"El socio no puede solicitar el libro"
         # Cada vez que un libro es prestado se registra el socio que lo solicita y la cantidad de días pactados para su devolución.
         elif (not libro_disponible(codigo_libro)):
@@ -103,7 +104,7 @@ def obtener_extraviados():
         for prestacion in obtener_pretaciones():
             if calcular_demora(prestacion) > 30:
                 listaExtraviados.append(prestacion)
-                #cambiar_estado_libro(prestacion.get_codigo_libro(), "extraviado")
+                cambiar_estado_libro(prestacion.get_codigo_libro(), "extraviado")
         return listaExtraviados    
     
     # devuelve los prestamos que no han sido finalizados es decir q los libros ya se hayan devuelto

@@ -22,7 +22,7 @@ def cantidad_libros_por_estado():
                 WHERE estado = "prestado"
             ''')
             prestados = cursor.fetchone()
-            resultados =  disponibles + prestados + extraviados
+            resultados =  [disponibles, prestados, extraviados]
             return resultados
             
 
@@ -55,9 +55,7 @@ def nombres_solicitantes_libro(titulo):
             ''', (codigo_libro[0],))
             solicitantes = cursor.fetchall()
             nombres = [nombre[0] for nombre in solicitantes]
-            return nombres if len(nombres) > 0 else "NO HAY SOLICITANTES"
-        else:
-            return "NO HAY UN LIBRO CON ESE NOMBRE"
+            return nombres
  
 def prestamos_por_socio(dni_socio):
     with sqlite3.connect('bd.db') as conexion:
@@ -88,7 +86,8 @@ def prestamos_demorados():
         demorados = []
         prestaciones = [Prestamo(*prestamo) for prestamo in response]
         for prestamo in prestaciones:
-            if calcular_demora(prestamo) > 0:
+            demora = calcular_demora(prestamo)
+            if demora > 0 and demora <= 30:
                 demorados.append(prestamo)
         return demorados
         
