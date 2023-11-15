@@ -8,11 +8,11 @@ class Libro:
     _precio_reposicion = 0
     _estado = ""
 
-    def __init__(self, codigo : int, titulo: str, precio_reposicion : float):
+    def __init__(self, codigo : int, titulo: str, precio_reposicion : float, estado: str):
         self._codigo = codigo
         self._titulo = titulo
         self._precio_reposicion = precio_reposicion
-        self._estado = "disponible"
+        self._estado = estado
 
     def get_codigo(self) -> int:
         return self._codigo

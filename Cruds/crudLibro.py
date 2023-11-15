@@ -18,13 +18,14 @@ def obtener_libros():
         libros = cursor.fetchall()
         return libros
 
-def obtener_libros_by_codigo(codigo):
+def obtener_libros_by_codigo(codigo: int):
     with sqlite3.connect('bd.db') as conexion:
         cursor = conexion.cursor()
         cursor.execute('''
-            SELECT * FROM libros where codigo = ?
-        ''',(codigo))
-        libro = cursor.fetchone()
+            SELECT * FROM libros WHERE codigo = ?
+        ''', (codigo,))
+        response = cursor.fetchone()
+        libro: Libro = Libro(response[0], response[1], response[2], response[3])
         return libro
 
 def actualizar_libro(libro: Libro):
