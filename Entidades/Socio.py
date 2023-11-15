@@ -3,7 +3,7 @@ import datetime
 from Entidades import Prestamo
 
 class Socio:
-    def __init__(self, dni: int, nombre: str, apellido :str,libros_prestados):
+    def __init__(self, dni: int, nombre: str, apellido :str):
         self._dni = dni
         self._nombre = nombre
         self.apellido = apellido

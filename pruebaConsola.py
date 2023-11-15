@@ -1,22 +1,29 @@
 
 
-from Entidades.Negocio import negocio
-
-neg = negocio()
+from Entidades.Negocio import *
+from reportes import *
 
 codigo_libro = 1
 dni_socio = 1
 dias_pactados = 1
-
+titulo_libro = "libro1"
 print("1. Pedir libro")
 print("2. Devolver libro")
+print("3. Reportes")
 
 seleccion = input("Selecciona una opción: ")
 
 if seleccion == "1":
-    neg.prestar_libro(codigo_libro, dni_socio, dias_pactados)
+    prestar_libro(codigo_libro, dni_socio, dias_pactados)
 elif seleccion == "2":
-    neg.devolver_libro(codigo_libro)
+    devolver_libro(codigo_libro)
+else:
+    print(f"cantidad libros: {cantidad_libros_por_estado()}")
+    print(f"Suma de libros extraviados: {precio_libros_extraviados()}")
+    print(f"Nombres {nombres_solicitantes_libro(titulo_libro)}")
+    print(f"Prestamos de alguien: {'/// '.join(map(str, prestamos_por_socio(dni_socio)))}")
+    print(f"Prestamos demorados: {prestamos_demorados()}")
+
 
 
 
