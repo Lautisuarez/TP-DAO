@@ -1,9 +1,6 @@
 import datetime
 import sqlite3
 
-from Cruds.crudLibro import actualizar_libro, obtener_libros, obtener_libros_by_codigo
-from Entidades.Libro import Libro
-
 class Prestamo:
     def init(self, codigo_libro : int, DNI_socio: int, dias_pactados: int):
         self._codigo_libro = codigo_libro
