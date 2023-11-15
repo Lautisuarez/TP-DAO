@@ -6,50 +6,56 @@ class SocioApp:
         self.root = root
         self.socios = []
 
-        self.tituloframe = tk.Frame(root)
-        self.tituloframe.pack()
-        self.titulosocios_label = tk.Label(self.tituloframe, text="LISTADO DE SOCIOS")
-        self.titulosocios_label.grid(row=0, column=0, sticky="e")  # Alineado a la derecha
-        
-        self.cuadroframe = tk.Frame(root)
-        self.cuadroframe.pack()
-        
-        self.socios_tree = ttk.Treeview(self.cuadroframe, columns=("Nombre", "Libros Prestados"), show="headings")
-        self.socios_tree.heading("Nombre", text="Nombre")
-        self.socios_tree.heading("Libros Prestados", text="Libros Prestados")
-
-        self.socios_tree.pack()
-        
-        # Crear un contenedor Frame
+        # TITULO
         self.frame = tk.Frame(root)
-        self.frame.pack()
+        self.frame.pack(pady=10)
+        self.titulosocios_label = tk.LabelFrame(self.frame, text="Agregar Socio")
+        self.titulosocios_label.grid(row=0, column=0, pady=10, padx=10)
         
-        self.nombre_label = tk.Label(self.frame, text="Nombre")
-        self.nombre_entry = tk.Entry(self.frame)
+        # FRAME INPUTS
+        self.nombre_label = tk.Label(self.titulosocios_label, text="Nombre")
+        self.nombre_entry = tk.Entry(self.titulosocios_label)
         
-        self.libros_prestados_label = tk.Label(self.frame, text="Libros Prestados")
-        self.libros_prestados_entry = tk.Entry(self.frame)
+        self.libros_prestados_label = tk.Label(self.titulosocios_label, text="Libros Prestados")
+        self.libros_prestados_entry = tk.Entry(self.titulosocios_label)
         
-        # Colocar los widgets usando grid
+        # INPUTS
         self.nombre_label.grid(row=0, column=0, sticky="e")  # Alineado a la derecha
-        self.nombre_entry.grid(row=0, column=1)
+        self.nombre_entry.grid(row=0, column=1, padx=10)
 
         self.libros_prestados_label.grid(row=1, column=0, sticky="e")  # Alineado a la derecha
-        self.libros_prestados_entry.grid(row=1, column=1)
+        self.libros_prestados_entry.grid(row=1, column=1, padx=10)
 
-        # Crear un contenedor para los botones
-        self.botones_frame = tk.Frame(root)
-        self.botones_frame.pack(pady=10)
+        # BOTONES
+        self.botones_frame = tk.Frame(self.titulosocios_label)
+        self.botones_frame.grid(row=2, column=0, columnspan=2, pady=10)
         
         self.prestar_button = tk.Button(self.botones_frame, text="Prestar Libro", command=self.prestar_libro)
         self.prestar_button.config(bg="lightblue")
         self.devolver_button = tk.Button(self.botones_frame, text="Devolver Libro", command=self.devolver_libro)
         self.devolver_button.config(bg="lightblue")
         
-        self.prestar_button.grid(row=0, column=0, padx=5)
-        self.devolver_button.grid(row=0, column=1, padx=5)
+        self.prestar_button.grid(row=3, column=0, padx=5)
+        self.devolver_button.grid(row=3, column=1, padx=5)
 
+        # TITULO TABLA
+        self.tituloframe = tk.Frame(root)
+        self.tituloframe.pack()
+        self.titulosocios_label = tk.Label(self.tituloframe, text="LISTADO DE SOCIOS", bg="#5c6e78", fg="white", font=("Helvetica", 12, "bold"))
+        self.titulosocios_label.grid(row=0, column=0, sticky="e")  # Alineado a la derecha
         
+        # FRAME TABLA
+        self.cuadroframe = tk.Frame(root)
+        self.cuadroframe.pack()
+        
+        # TABLA
+        self.socios_tree = ttk.Treeview(self.cuadroframe, columns=("Nombre", "Libros Prestados"), show="headings", height=15)
+        self.socios_tree.column("Nombre", width=200, anchor=tk.CENTER)
+        self.socios_tree.heading("Nombre", text="Nombre", anchor=tk.CENTER)
+        self.socios_tree.column("Libros Prestados", width=200, anchor=tk.CENTER)
+        self.socios_tree.heading("Libros Prestados", text="Libros Prestados", anchor=tk.CENTER)
+
+        self.socios_tree.pack()
 
     def prestar_libro(self):
         nombre = self.nombre_entry.get()
