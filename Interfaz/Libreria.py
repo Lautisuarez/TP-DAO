@@ -11,45 +11,30 @@ class LibreriaApp:
         for libro in obtener_libros():
             self.libros.append(libro)
 
+        # TITULO
         self.tituloframe = tk.Frame(root)
-        self.tituloframe.pack()
-        self.titulolibros_label = tk.Label(self.tituloframe, text="LISTADO DE LIBROS")
-        self.titulolibros_label.grid(row=0, column=0, sticky="e")  # Alineado a la derecha
-        
-        self.cuadroframe = tk.Frame(root)
-        self.cuadroframe.pack()
-        
-        self.libros_tree = ttk.Treeview(self.cuadroframe, columns=("Código", "Título", "Precio", "Estado"), show="headings")
-        self.libros_tree.heading("Código", text="Código")
-        self.libros_tree.heading("Título", text="Título")
-        self.libros_tree.heading("Precio", text="Precio")
-        self.libros_tree.heading("Estado", text="Estado")
-        
-        self.libros_tree.pack()
-        self.libros_tree.bind('<ButtonRelease-1>', self.cargar_datos_seleccionados) # EVENTO CLICK FILA
+        self.tituloframe.pack(pady=10)
+        self.titulolibros_label = tk.LabelFrame(self.tituloframe, text="Agregar Libro")
+        self.titulolibros_label.grid(row=0, column=0, pady=10, padx=10) 
 
-        # Crear un contenedor Frame
-        self.frame = tk.Frame(root)
-        self.frame.pack()
+        # FRAME INPUTS
+        self.titulo_label = tk.Label(self.titulolibros_label, text="Título")
+        self.titulo_entry = tk.Entry(self.titulolibros_label)
 
-        # Crear y colocar los widgets en el Frame
-        self.titulo_label = tk.Label(self.frame, text="Título")
-        self.titulo_entry = tk.Entry(self.frame)
+        self.precio_label = tk.Label(self.titulolibros_label, text="Precio")
+        self.precio_entry = tk.Entry(self.titulolibros_label)
 
-        self.precio_label = tk.Label(self.frame, text="Precio")
-        self.precio_entry = tk.Entry(self.frame)
-
-        # Colocar los widgets usando grid
+        # INPUTS
         self.titulo_label.grid(row=0, column=0, sticky="e")  # Alineado a la derecha
         self.titulo_entry.grid(row=0, column=1)
 
         self.precio_label.grid(row=1, column=0, sticky="e")  # Alineado a la derecha
         self.precio_entry.grid(row=1, column=1)
 
-        # Crear un contenedor para los botones
-        self.botones_frame = tk.Frame(root)
-        self.botones_frame.pack(pady=10)
-        
+        # BOTONES
+        self.botones_frame = tk.Frame(self.titulolibros_label)
+        self.botones_frame.grid(row=2, column=0, columnspan=2, pady=10)
+
         self.agregar_button = tk.Button(self.botones_frame, text="Agregar", command=self.agregar_libro_BD)
         self.agregar_button.config(bg="lightblue")
         self.actualizar_button = tk.Button(self.botones_frame, text="Actualizar", command=self.actualizar_libro_BD)
@@ -57,10 +42,36 @@ class LibreriaApp:
         self.eliminar_button = tk.Button(self.botones_frame, text="Eliminar", command=self.eliminar_libro)
         self.eliminar_button.config(bg="lightblue")
 
-        self.agregar_button.grid(row=0, column=0, padx=5)
-        self.actualizar_button.grid(row=0, column=1, padx=5)
-        self.eliminar_button.grid(row=0, column=2, padx=5)
+        self.agregar_button.grid(row=3, column=0, padx=5)
+        self.actualizar_button.grid(row=3, column=1, padx=5)
+        self.eliminar_button.grid(row=3, column=2, padx=5)
 
+        # TITULO TABLA
+        self.titulo_tabla_frame = tk.Frame(root)
+        self.titulo_tabla_frame.pack()
+        self.titulolibros_label = tk.Label(self.titulo_tabla_frame, text="LISTADO DE LIBROS", bg="#5c6e78", fg="white", font=("Helvetica", 12, "bold"))
+        self.titulolibros_label.grid(row=0, column=0, sticky="e")  # Alineado a la derecha
+        
+        # FRAME TABLA
+        self.cuadroframe = tk.Frame(root)
+        self.cuadroframe.pack()
+        
+        # TABLA
+        self.libros_tree = ttk.Treeview(self.cuadroframe, columns=("Código", "Título", "Precio", "Estado"), show="headings", height=15)
+        self.libros_tree.column("Código", width=50, anchor=tk.CENTER)
+        self.libros_tree.heading("Código", text="Código", anchor=tk.CENTER)
+        self.libros_tree.column("Título", width=200, anchor=tk.CENTER)
+        self.libros_tree.heading("Título", text="Título", anchor=tk.CENTER)
+        self.libros_tree.column("Precio", width=200, anchor=tk.CENTER)
+        self.libros_tree.heading("Precio", text="Precio", anchor=tk.CENTER)
+        self.libros_tree.column("Estado", width=200, anchor=tk.CENTER)
+        self.libros_tree.heading("Estado", text="Estado", anchor=tk.CENTER)
+
+        
+        self.libros_tree.pack()
+        self.libros_tree.bind('<ButtonRelease-1>', self.cargar_datos_seleccionados) # EVENTO CLICK FILA
+        
+        # ACTUALIZAR TABLA
         self.actualizar_lista()
 
     def cargar_datos_seleccionados(self, event):

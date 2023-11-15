@@ -19,7 +19,8 @@ root.title("Gestión de Biblioteca")
 notebook = ttk.Notebook(root)
 notebook.pack(fill="both", expand=True)
 
-style = ttk.Style()
+# TODO: ARREGLAR ESTILOS
+""" style = ttk.Style()
 settings = {"TNotebook": 
                 {
                     "configure": 
@@ -42,7 +43,7 @@ settings = {"TNotebook":
 
 
 style.theme_create("mi_estilo", parent="alt", settings=settings)
-style.theme_use("mi_estilo")
+style.theme_use("mi_estilo") """
 frame_libreria = tk.Frame(notebook, background="#5c6e78")
 frame_socios = tk.Frame(notebook, background="#5c6e78")
 
