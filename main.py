@@ -1,7 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 from Interfaz.Libreria import LibreriaApp
+from Interfaz.Reporte import ReporteApp
 from Interfaz.Socios import SocioApp
+from Interfaz.Prestamo import PrestamoApp
 
 # Funciones para alternar entre las interfaces
 def mostrar_libreria():
@@ -46,12 +48,18 @@ style.theme_create("mi_estilo", parent="alt", settings=settings)
 style.theme_use("mi_estilo") """
 frame_libreria = tk.Frame(notebook, background="#5c6e78")
 frame_socios = tk.Frame(notebook, background="#5c6e78")
+frame_prestamo = tk.Frame(notebook, background="#5c6e78")
+frame_reporte = tk.Frame(notebook, background="#5c6e78")
 
 notebook.add(frame_libreria, text="Librería")
 notebook.add(frame_socios, text="Socios")
+notebook.add(frame_prestamo, text="Prestamo")
+notebook.add(frame_reporte, text="Reporte")
 
 # Inicializar las  interfaces
 libreria_app = LibreriaApp(frame_libreria)
 socio_app = SocioApp(frame_socios)
+prestamo_app = PrestamoApp(frame_prestamo)
+reporte_app = ReporteApp(frame_reporte)
 
 root.mainloop()

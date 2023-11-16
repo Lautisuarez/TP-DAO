@@ -46,7 +46,7 @@ class Prestamo:
         return self._demora
     
     def __str__(self):
-        return f"\n ID={self.get_id()},\n CodigoLibro={self.get_codigo_libro()},\n DNISocio={self.get_dni_socio()}, " \
-               f"\nFechaPrestamo={self.get_fecha_prestamo()},\n DiasPactados={self.get_dias_pactados()},\n " \
-               f"FechaDevolucion={self.get_fecha_devolucion()}, \n Demora={self.get_demora()})\n"
+        return f"\n || ID = {self.get_id()}\n || CodigoLibro = {self.get_codigo_libro()}\n || DNISocio = {self.get_dni_socio()}" \
+               f"\n || FechaPrestamo = {self.get_fecha_prestamo()}\n || DiasPactados = {self.get_dias_pactados()}" \
+               f"\n || FechaDevolucion = {self.get_fecha_devolucion()}\n || Demora = {self.get_demora()}\n"
 

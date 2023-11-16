@@ -1,7 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 
-from Cruds.crudSocio import obtener_socios
+from Cruds.crudSocio import *
+from Entidades.Socio import Socio
 
 class SocioApp:
     def __init__(self, root):
@@ -29,25 +31,31 @@ class SocioApp:
         
         # INPUTS
         self.DNI_label.grid(row=1, column=0, sticky="e")  # Alineado a la derecha
-        self.DNI_label.grid(row=1, column=1, padx=10)
+        self.DNI_entry.grid(row=1, column=1, padx=10)
         
-        self.nombre_label.grid(row=0, column=0, sticky="e")  # Alineado a la derecha
-        self.nombre_entry.grid(row=0, column=1, padx=10)
+        self.nombre_label.grid(row=2, column=0, sticky="e")  # Alineado a la derecha
+        self.nombre_entry.grid(row=2, column=1, padx=10)
 
-        self.apellido_label.grid(row=1, column=0, sticky="e")  # Alineado a la derecha
-        self.apellido_label.grid(row=1, column=1, padx=10)
+        self.apellido_label.grid(row=3, column=0, sticky="e")  # Alineado a la derecha
+        self.apellido_entry.grid(row=3, column=1, padx=10)
 
         # BOTONES
         self.botones_frame = tk.Frame(self.titulosocios_label)
-        self.botones_frame.grid(row=2, column=0, columnspan=2, pady=10)
+        self.botones_frame.grid(row=4, column=0, columnspan=2, pady=10)
         
-        self.prestar_button = tk.Button(self.botones_frame, text="Prestar Libro", command=self.prestar_libro)
-        self.prestar_button.config(bg="lightblue")
-        self.devolver_button = tk.Button(self.botones_frame, text="Devolver Libro", command=self.devolver_libro)
-        self.devolver_button.config(bg="lightblue")
+        self.agregar_button = tk.Button(self.botones_frame, text="Agregar", command=self.agregar_socio)
+        self.agregar_button.config(bg="lightblue")
+        self.editar_button = tk.Button(self.botones_frame, text="Editar", command=self.editar_socio)
+        self.editar_button.config(bg="lightblue")
+        self.eliminar_button = tk.Button(self.botones_frame, text="Eliminar", command=self.eliminar_socio)
+        self.eliminar_button.config(bg="lightblue")
+        self.limpiar_button = tk.Button(self.botones_frame, text="Limpiar", command=self.limpiar)
+        self.limpiar_button.config(bg="lightblue")
         
-        self.prestar_button.grid(row=3, column=0, padx=5)
-        self.devolver_button.grid(row=3, column=1, padx=5)
+        self.agregar_button.grid(row=3, column=0, padx=5)
+        self.editar_button.grid(row=3, column=1, padx=5)
+        self.eliminar_button.grid(row=3, column=2, padx=5)
+        self.limpiar_button.grid(row=3, column=2, padx=5)
 
         # TITULO TABLA
         self.tituloframe = tk.Frame(root)
@@ -71,33 +79,66 @@ class SocioApp:
         self.socios_tree.pack()
         self.socios_tree.bind('<ButtonRelease-1>', self.cargar_datos_seleccionados) 
 
+        self.actualizar_lista_socios()
+
     def cargar_datos_seleccionados(self, event):
         seleccion = self.socios_tree.selection()
+        if seleccion:
+            
+            # Obtener los valores actuales de la fila seleccionada
+            valores_actuales = self.socios_tree.item(seleccion)['values']
+            self.DNI_entry.config(state="normal")
+            # Cargar los datos en los Entry
+            self.DNI_entry.delete(0, tk.END)
+            self.DNI_entry.insert(0, valores_actuales[0])
+            self.nombre_entry.delete(0, tk.END)
+            self.nombre_entry.insert(0, valores_actuales[1])
+            self.apellido_entry.delete(0, tk.END)
+            self.apellido_entry.insert(0, valores_actuales[2])
+            self.DNI_entry.config(state="readonly")
 
-    def prestar_libro(self):
+    def agregar_socio(self):
+        dni = self.DNI_entry.get()
         nombre = self.nombre_entry.get()
-        libros_prestados = self.libros_prestados_entry.get()
+        apellido = self.apellido_entry.get()
 
-        if nombre and libros_prestados:
-            libros_prestados = libros_prestados.split(',')
-            socio = (nombre, libros_prestados)
-            self.socios.append(socio)
-            self.actualizar_lista_socios()
-            for libro in libros_prestados:
-                self.libros_app.prestar_libro_a_socio(nombre, libro)
+        socio = Socio(dni, nombre, apellido)
+        agregar_socio(socio)
 
-    def devolver_libro(self):
+        self.socios.append((socio.get_dni(), socio.get_nombre(), socio.get_apellido()))
+        self.actualizar_lista_socios()
+
+    def editar_socio(self):
         seleccion = self.socios_tree.selection()
         if seleccion:
+            
+            # Obtener los valores actuales de la fila seleccionada
             nombre = self.nombre_entry.get()
-            libro = self.libros_prestados_entry.get()
-            socio = self.socios_tree.item(seleccion[0])['values']
+            apellido = self.apellido_entry.get()
 
-            if nombre and libro:
-                if socio[0] == nombre and libro in socio[1]:
-                    socio[1].remove(libro)
-                    self.libros_app.devolver_libro_de_socio(nombre, libro)
-                    self.actualizar_lista_socios()
+            # Actualizar el libro seleccionado
+            socio = Socio(self.socios_tree.item(seleccion)['values'][0], nombre, apellido)
+            self.socios_tree.item(seleccion, values=(socio.get_dni(), socio.get_nombre(), socio.get_apellido()))
+            actualizar_socio(socio)
+
+            messagebox.showinfo("Actualizado", f"El Socio: '{socio.get_nombre()}' fue actualizado correctamente.")
+
+            # Reseteamos valores
+            self.limpiar_entradas()
+            self.socios_tree.selection_remove(seleccion)
+                
+        else:
+            messagebox.showerror("Error", "Debe seleccionar un socio para actualizarlo.")
+
+    def eliminar_socio(self):
+        seleccion = self.socios_tree.selection()
+        if seleccion:
+            socio_eliminado = self.socios_tree.item(seleccion)['values']
+            self.socios_tree.delete(seleccion)
+            eliminar_socio(socio_eliminado[0])
+            messagebox.showinfo("Eliminado", f"El socio: '{socio_eliminado[1]}' fue eliminado correctamente.")
+        else:
+            messagebox.showerror("Error", "Debe seleccionar un socio para eliminarlo.")
 
     def actualizar_lista_socios(self):
         self.socios_tree.delete(*self.socios_tree.get_children())
@@ -105,9 +146,14 @@ class SocioApp:
             self.socios_tree.insert("", "end", values=socio)
         self.limpiar_entradas()
 
+    def limpiar(self):
+        self.limpiar_entradas()
+    
     def limpiar_entradas(self):
+        self.DNI_entry.config(state="normal")
         self.nombre_entry.delete(0, "end")
-        self.libros_prestados_entry.delete(0, "end")
+        self.DNI_entry.delete(0, "end")
+        self.apellido_entry.delete(0, "end")
 
 if __name__ == "__main__":
     root = tk.Tk()

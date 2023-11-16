@@ -1,5 +1,3 @@
-
-
 from datetime import datetime
 import sqlite3
 from Cruds.crudLibro import actualizar_libro, obtener_libros_by_codigo
@@ -7,29 +5,29 @@ from Entidades.Libro import Libro
 from Entidades.Prestamo import Prestamo
 
 def prestar_libro(codigo_libro , dni_socio, dias_pactados):
-        #Cuando un socio solicite un libro el software debe verificar que el socio no posea más de tres libros prestados 
-        # (aunque todavía se encuentre dentro del plazo del préstamo) y que no posea ningún libro con demora en su devolución
+    #Cuando un socio solicite un libro el software debe verificar que el socio no posea más de tres libros prestados 
+    # (aunque todavía se encuentre dentro del plazo del préstamo) y que no posea ningún libro con demora en su devolución
 
-        if(contar_libros_prestados_por_socio(dni_socio) > 3 or socio_tiene_libros_con_demora(dni_socio) == True):
-            print(f"El socio no puede solicitar el libro")
-            return f"El socio no puede solicitar el libro"
-        # Cada vez que un libro es prestado se registra el socio que lo solicita y la cantidad de días pactados para su devolución.
-        elif (not libro_disponible(codigo_libro)):
-            print(f"El libro no esta disponible")
-            return f"El libro no esta disponible"
-        else:
-            nuevoPrestamo = Prestamo(ultimo_id_prestamos(), codigo_libro, dni_socio,datetime.now(), dias_pactados, None, None)
-            # agrega la prestacion a la BD
-            agregar_prestacion(nuevoPrestamo)
-            # cambia el estado dle libro en la BD
-            cambiar_estado_libro(codigo_libro, "prestado")
+    if(contar_libros_prestados_por_socio(dni_socio) > 3 or socio_tiene_libros_con_demora(dni_socio) == True):
+        print(f"El socio no puede solicitar el libro")
+        return f"El socio no puede solicitar el libro"
+    # Cada vez que un libro es prestado se registra el socio que lo solicita y la cantidad de días pactados para su devolución.
+    elif (not libro_disponible(codigo_libro)):
+        print(f"El libro no esta disponible")
+        return f"El libro no esta disponible"
+    else:
+        nuevoPrestamo = Prestamo(ultimo_id_prestamos(), codigo_libro, dni_socio,datetime.now(), dias_pactados, None, None)
+        # agrega la prestacion a la BD
+        agregar_prestacion(nuevoPrestamo)
+        # cambia el estado dle libro en la BD
+        cambiar_estado_libro(codigo_libro, "prestado")
+        return nuevoPrestamo
             
         
 def devolver_libro(codigo_libro):
         # Actualiza la fecha de devolución y la demora al momento de la devolución
-        for prestamo in obtener_pretaciones():
-            if prestamo.get_codigo_libro() == codigo_libro:
-                
+        for prestamo in obtener_pretamos_no_devueltas():
+            if int(prestamo.get_codigo_libro()) == int(codigo_libro):
                 prestamo.set_fecha_devolucion(datetime.now())
                 
                 # obtengo la demora de la prestacion
@@ -41,9 +39,9 @@ def devolver_libro(codigo_libro):
                 
                 # actualizar en BD el prestamo
                 actualizar_prestamo(prestamo)
-                
                 # cambiar le estado del libro en BD
-                cambiar_estado_libro(codigo_libro, "disponible")    
+                cambiar_estado_libro(codigo_libro, "disponible")
+                return prestamo
     
     # proceso para guardar en BD la prestacion
 def agregar_prestacion(prestamo: Prestamo):
@@ -80,14 +78,14 @@ def ultimo_id_prestamos():
     # cuenta cantidad de libros prestados por socios
 def contar_libros_prestados_por_socio(dni_socio):
         contador = 0
-        for prestamo in obtener_pretaciones():
+        for prestamo in obtener_pretamos_no_devueltas():
             if prestamo.get_dni_socio() == dni_socio:
                 contador += 1
         return contador    
     
     # Verifica si el socio tiene libros con demora en la devolución
 def socio_tiene_libros_con_demora(dni_socio):
-        for prestamo in obtener_pretaciones():
+        for prestamo in obtener_pretamos_no_devueltas():
             if prestamo.get_dni_socio() == dni_socio:
                if calcular_demora(prestamo) > 0:
                    return True
@@ -110,14 +108,14 @@ def cambiar_estado_libro(codigo_libro: int, estado):
     # Obiente los prestamos no devueltos que superen los 30 dias de demora
 def obtener_extraviados():
         listaExtraviados = []
-        for prestacion in obtener_pretaciones():
+        for prestacion in obtener_pretamos_no_devueltas():
             if calcular_demora(prestacion) > 30:
                 listaExtraviados.append(prestacion)
                 cambiar_estado_libro(prestacion.get_codigo_libro(), "extraviado")
         return listaExtraviados    
     
     # devuelve los prestamos que no han sido finalizados es decir q los libros ya se hayan devuelto
-def obtener_pretaciones():
+def obtener_pretamos_no_devueltas():
     try:
         with sqlite3.connect('bd.db') as conexion:
             cursor = conexion.cursor()
@@ -137,8 +135,6 @@ def obtener_pretaciones():
 def libro_disponible(codigo_libro):
         libro: Libro = obtener_libros_by_codigo(codigo_libro)
         return libro.get_estado() == "disponible"
-       
-
 
     # guarda en la base de datos la devolucion de un libro, solo con fecha y demora 
 def actualizar_prestamo(prestamo:Prestamo):
@@ -154,3 +150,14 @@ def actualizar_prestamo(prestamo:Prestamo):
     except sqlite3.Error as e:
         error = f"Error actualizando el prestamo: {e}"
         raise ValueError(error)
+    
+
+def obtener_prestamos():
+        with sqlite3.connect('bd.db') as conexion:
+            cursor = conexion.cursor()
+            cursor.execute('''
+                SELECT * FROM prestamos
+            ''')
+            lista_bd = cursor.fetchall()
+            # mapeo de la base de datos a una lista de objetos prestamos
+            return lista_bd

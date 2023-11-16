@@ -1,7 +1,9 @@
 
 
 from Entidades.Negocio import *
-from reportes import *
+from Reporte.doc_reporte import generar_reporte
+#HACER BIEN EL IMPORT A REPORTES
+from Reporte.reportes import *
 
 codigo_libro = 2
 dni_socio = 2
@@ -15,7 +17,14 @@ obtener_extraviados()
 
 seleccion = input("Selecciona una opción: ")
 
-if seleccion == "1":
+
+
+""" if seleccion == "1":
+    generar_reporte() """
+    
+    
+
+""" if seleccion == "1":
     prestar_libro(codigo_libro, dni_socio, dias_pactados)
 elif seleccion == "2":
     devolver_libro(codigo_libro)
@@ -24,7 +33,7 @@ else:
     print(f"Suma de libros extraviados: {precio_libros_extraviados()}")
     print(f"Nombres {nombres_solicitantes_libro(titulo_libro)}")
     print(f"Prestamos de alguien: {prestamos_por_socio(dni_socio)}")
-    print(f"Prestamos demorados: {prestamos_demorados()}")
+    print(f"Prestamos demorados: {prestamos_demorados()}") """
 
 
 

@@ -22,7 +22,7 @@ def cantidad_libros_por_estado():
                 WHERE estado = "prestado"
             ''')
             prestados = cursor.fetchone()
-            resultados =  [disponibles, prestados, extraviados]
+            resultados =  [disponibles[1], prestados[1], extraviados[1]]
             return resultados
             
 

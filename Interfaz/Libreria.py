@@ -90,7 +90,7 @@ class LibreriaApp:
         titulo = self.titulo_entry.get()
         precio = self.precio_entry.get()
 
-        libro = Libro(self.obtenerProximoID() ,titulo, precio)
+        libro = Libro(self.obtenerProximoID() ,titulo, precio, "disponible")
         agregar_libro(libro)
 
         self.libros.append((libro._codigo, libro._titulo, libro._precio_reposicion, libro._estado))

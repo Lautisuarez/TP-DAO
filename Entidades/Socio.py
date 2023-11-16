@@ -6,7 +6,7 @@ class Socio:
     def __init__(self, dni: int, nombre: str, apellido :str):
         self._dni = dni
         self._nombre = nombre
-        self.apellido = apellido
+        self._apellido = apellido
 
     def get_dni(self) -> int:
         return self._dni
